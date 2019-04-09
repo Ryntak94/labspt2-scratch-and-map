@@ -1,5 +1,18 @@
 * {
   box-sizing: border-box;
+  font-family: 'Roboto', sans-serif;
+}
+
+body {
+  overflow-y: hidden;
+}
+
+h1, h2 {
+  font-family: 'Anton', sans-serif;
+}
+
+p {
+  font-family: 'Roboto', sans-serif;
 }
 
 /* LOGIN STYLES */
@@ -50,7 +63,7 @@
 .box-wrapper {
   display: flex;
   flex-direction: column;
-  /* align-items: center; */
+  align-items: center;
   max-width: 350px;
   width: 100%;
   min-width: 200px;
@@ -138,3 +151,146 @@
 .terms-link {
   color: dodgerblue;
 }
+
+.NavBar, .Nav, .Menu {
+  background-color: black;
+}
+
+.sidebar {
+  img {
+    margin: 20px auto !important;
+    height: 50px;
+    width: 100px;
+  }
+
+  .closebutton {
+    margin-left: 85% !important;
+    margin-top: 5px;
+  }
+
+}
+
+.landingpg {
+  position: relative;
+  top:-5px;
+  left: -5px;
+  margin: -10px;
+  display: flex;
+  justify-content: center;
+  width: 100vw;
+  height: 95vh;
+  background-image: url('./img/hero.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+
+  img {
+    margin-top: 150px;
+    height: 210px;
+    width: 900px;
+    z-index: 1;
+
+    @media screen and (max-width: 800px) {
+      width: 300px;
+      height: 70px;
+    }
+  }
+
+  &:before {
+    content: '';
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	background-image: linear-gradient(to bottom , black, grey);
+	opacity: .6; 
+  }
+}
+
+
+
+.Menu {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+
+  .icon {
+    background-color: black !important;
+    color: white !important;
+    height: 30px;
+  
+    .text {
+      position: relative !important;
+      top: -2px;
+    }
+
+  }
+  
+  
+  .icon:hover {
+    color: black !important;
+    background-color: white !important;
+  }
+}
+
+.AuthButtons {
+  display: flex;
+}
+
+
+
+.mapview {
+  width: 100vw;
+  height: 90vh;
+}
+
+.legend {
+  width: 170px;
+  z-index: 40 !important;
+  position: relative !important;
+  top: 60%;
+  left: 85%;
+
+  .listItem {
+    display: flex !important;
+    align-items: center !important;
+  }
+
+  .notSelected {
+    color: lightgrey !important;
+  }
+
+  .wantVisit {
+    color: #CD5D01 !important;
+  }
+
+  .transited {
+    color: #8FC201 !important;
+  }
+
+  .visited {
+    color: #9B016D !important;
+  }
+
+  .lived {
+    color: #017B7B !important;
+  }
+}
+
+#map {
+  z-index: 2;
+}
+
+.loading {
+  position: absolute;
+  top: -15px;
+  left: -17px;
+  width: 110%;
+  height: 100vh;
+  background-color: black;
+  opacity: .9;
+  color: white;
+  padding-top: 300px;
+}
+

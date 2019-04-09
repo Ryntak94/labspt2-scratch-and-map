@@ -4,5 +4,8 @@
   },
   "scripts": {
     "heroku-postbuild": "cd scratch-and-map-front-end && yarn install && yarn build"
+  },
+  "dependencies": {
+    "heroku": "^7.22.4"
   }
 }

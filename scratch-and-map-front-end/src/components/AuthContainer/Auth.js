@@ -1,7 +1,9 @@
 import React, { Component } from "react";
-import Login from "../Auth/Login";
-import Register from "../Auth/Register";
+import Login from "./Login";
+import Register from "./Register";
+import FbLogin from "./FbLogin";
 import axios from "axios";
+import { Button, Header, Image, Modal } from 'semantic-ui-react'
 
 class Auth extends Component {
   constructor() {
@@ -33,6 +35,7 @@ class Auth extends Component {
     this.setState({ [e.target.name]: e.target.value });
   };
 
+
   onSubmitHandler = e => {
     e.preventDefault();
     e.stopPropagation();
@@ -43,12 +46,44 @@ class Auth extends Component {
         email: this.state.email,
         password: this.state.password
       })
-      .then(response => console.log(response));
+      .then(response => {
+        console.log(response)
+        this.props.history.push("/map");//Not currently redirecting
+      });
   };
 
   render() {
     return (
-      <div className="auth-wrapper">
+      <div className="landing">
+      <div className="Nav">
+      <Modal size='mini' trigger={<Button className="navbutton" inverted>Sign Up</Button>} closeIcon>
+      <Modal.Content>
+      <div className="box-wrapper">
+          {this.state.isLoginOpen && (
+            <FbLogin
+              inputChange={this.handleInputChange}
+              submit={this.onSubmitHandler}
+            />
+          )}
+        </div>
+        </Modal.Content>
+        </Modal>
+
+        <Modal size='mini' trigger={<Button className="navbutton" inverted>Log In</Button>} closeIcon>
+        <Modal.Content image>
+        <div className="box-wrapper">
+          {this.state.isLoginOpen && (
+            <FbLogin
+              inputChange={this.handleInputChange}
+              submit={this.onSubmitHandler}
+            />
+          )}
+          </div>
+          </Modal.Content>
+          </Modal>
+
+
+      {/* <div className="auth-wrapper">
         <div className="auth-controller">
           <div
             className={
@@ -69,20 +104,8 @@ class Auth extends Component {
             Log In
           </div>
         </div>
-        <div className="box-wrapper">
-          {this.state.isRegisterOpen && (
-            <Register
-              inputChange={this.handleInputChange}
-              submit={this.onSubmitHandler}
-            />
-          )}
-          {this.state.isLoginOpen && (
-            <Login
-              inputChange={this.handleInputChange}
-              submit={this.onSubmitHandler}
-            />
-          )}
-        </div>
+      </div> */}
+      </div>
       </div>
     );
   }

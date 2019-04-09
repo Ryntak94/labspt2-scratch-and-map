@@ -1,8 +1,10 @@
 /node_modules
-/env
+env
 /venv
 .DS_Store
 .vscode
 *.pyc
 __pycache__
 .env
+.htaccess
+/web.config
