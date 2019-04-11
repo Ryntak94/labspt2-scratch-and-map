@@ -67,9 +67,8 @@ def get_user_by_fbid(fbid):
 @app.route('/api/users/fb/token', methods=['POST'])
 def check_user_by_token():
     token = request.json['accessToken']
-    userID = request.json['fb_user_id']
-    user = users.query.filter(users.fb_access_token==token and users.fb_user_id==userID).first()
-    if user == True:
+    user = users.query.filter(users.fb_access_token==token).first()
+    if user:
         return jsonify({'isLoggedIn': 'true'})
     else:
         return jsonify({'isLoggedIn': 'false'})
