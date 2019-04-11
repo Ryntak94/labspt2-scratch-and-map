@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import ParentNav from "./components/NavContainer/ParentNav";
 import "./index.scss";
+import axios from "axios";
 require("dotenv").config();
 
 class App extends Component {
