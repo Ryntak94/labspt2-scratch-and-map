@@ -68,7 +68,7 @@ def get_user_by_fbid(fbid):
 def check_user_by_token():
     token = request.json['accessToken']
     userID = request.json['fb_user_id']
-    user = users.query.filter(users.fb_access_token==token and users.fb_user_id=userID).first()
+    user = users.query.filter(users.fb_access_token==token and users.fb_user_id==userID).first()
     if user == True:
         return jsonify({'isLoggedIn': 'true'})
     else:
