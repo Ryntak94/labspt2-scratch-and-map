@@ -35,7 +35,6 @@ def error():
 def signup():
     username = request.json['username']
     password = request.json['password']
-    isLoggedIn = request.json['isLoggedIn']
     first_name = request.json['first_name']
     last_name = request.json['last_name']
     age = request.json['age']
@@ -47,13 +46,12 @@ def signup():
     home_country = request.json['home_country']
     fb_user_id = request.json['fb_user_id']
     fb_access_token = request.json['fb_access_token']
-    new_user = users(username, password, isLoggedIn, first_name, last_name, age, nationality, picture_url, email, role, auto_scratch, home_country, fb_user_id, fb_access_token)
+    new_user = users(username, password, first_name, last_name, age, nationality, picture_url, email, role, auto_scratch, home_country, fb_user_id, fb_access_token)
     db.session.add(new_user)
     db.session.commit()
     return jsonify(new_user.id)
 
-@app.route('/api/login/fb/<fbid>', methods=['PUT']) 
-
+@app.route('/api/login/fb/<fbid>', methods=['PUT'])
 def fbLogin(fbid):
     user = users.query.filter(users.fb_user_id == fbid).first()
     if  request.json['fb_access_token']:
@@ -69,8 +67,12 @@ def get_user_by_fbid(fbid):
 @app.route('/api/users/fb/token', methods=['POST'])
 def check_user_by_token():
     token = request.json['accessToken']
-    user = users.query.filter(users.fb_access_token==token).first()
-    return jsonify({'isLoggedIn': 'true'})
+    userID = request.json['fb_user_id']
+    user = users.query.filter(users.fb_access_token==token and users.fb_user_id=userID).first()
+    if user == True:
+        return jsonify({'isLoggedIn': 'true'})
+    else:
+        return jsonify({'isLoggedIn': 'false'})
 
 #USERS ENDPOINTS
 @app.route('/api/users', methods =['GET'])
@@ -99,7 +101,6 @@ def update_user(id):
     user.role = request.json['role']
     user.auto_scratch = request.json['auto_scratch']
     user.fb_user_id = request.json['fb_user_id']
-    user.isLoggedIn = request.json['isLoggedIn']
     user.fb_access_token = request.json['fb_access_token']
     db.session.commit()
     return user_schema.jsonify(user)
@@ -119,7 +120,6 @@ def fb_user(fbid):
     user.role = request.json['role']
     user.auto_scratch = request.json['auto_scratch']
     user.fb_user_id = request.json['fb_user_id']
-    user.isLoggedIn = request.json['isLoggedIn']
     user.fb_access_token = request.json['fb_access_token']
     db.session.commit()
     return user_schema.jsonify(user)

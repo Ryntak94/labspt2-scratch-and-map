@@ -19,7 +19,6 @@ class FbLogin extends Component {
     console.log("FACEBOOK RESPONSE", response);
     this.setState(
       {
-        isLoggedIn: true,
         username: response.email,
         name: response.name,
         email: response.email,
@@ -35,7 +34,6 @@ class FbLogin extends Component {
         const user = {
           username: response.email,
           password: response.accessToken,
-          isLoggedIn: this.state.isLoggedIn,
           email: response.email,
           first_name: first,
           last_name: last,
@@ -113,9 +111,6 @@ class FbLogin extends Component {
         }
       }); //end getLoginStatus
     }; //end fbAsyncInit
-
-    if (this.state.isLoggedIn) {
-    }
   } //end component did update
 
   handleClose = () => {

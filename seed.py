@@ -9,10 +9,10 @@ def load_users(user_filename):
     for i, row in enumerate(open(user_filename)):
         if row[0]!='i':
             row = row.rstrip()
-            user_id, username, password, first_name, last_name, age, nationality, picture_url, email, role, auto_scratch, home_country, fb_user_id, fb_access_token, isLoggedIn= row.split(",")
+            user_id, username, password, first_name, last_name, age, nationality, picture_url, email, role, auto_scratch, home_country, fb_user_id, fb_access_token= row.split(",")
 
             user = users(username=username, password=password, first_name=first_name, last_name=last_name,
-            age=age, nationality=nationality, picture_url=picture_url, email=email, role=role, auto_scratch=auto_scratch, home_country=home_country, fb_user_id=fb_user_id, fb_access_token=fb_access_token, isLoggedIn=isLoggedIn)
+            age=age, nationality=nationality, picture_url=picture_url, email=email, role=role, auto_scratch=auto_scratch, home_country=home_country, fb_user_id=fb_user_id, fb_access_token=fb_access_token)
 
             db.session.add(user)
     db.session.commit()
