@@ -1,5 +1,5 @@
 import React from 'react'
-import { Message, Icon, List } from 'semantic-ui-react'
+import { Message, List } from 'semantic-ui-react'
 
 const Legend = () => (
     <Message className="legend">

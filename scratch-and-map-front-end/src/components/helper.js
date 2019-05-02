@@ -142,7 +142,7 @@ export let countries = [
   "SLB",
   "SOM",
   "ZAF",
-  "SSD",
+  "SDS",
   "ESP",
   "LKA",
   "SDN",
@@ -218,7 +218,7 @@ export function codeToCountry(code) {
       return "Argentina";
     case "ARM":
       return "Armenia";
-    case "AU1":
+    case "AUS":
       return "Australia";
     case "AUT":
       return "Austria";
@@ -268,7 +268,7 @@ export function codeToCountry(code) {
       return "Chad";
     case "CHL":
       return "Chile";
-    case "CH1":
+    case "CHN":
       return "China";
     case "COL":
       return "Colombia";
@@ -288,7 +288,7 @@ export function codeToCountry(code) {
       return "Cyprus";
     case "CZE":
       return "Czechia";
-    case "DN1":
+    case "DNK":
       return "Denmark";
     case "DJI":
       return "Djibouti";
@@ -312,9 +312,9 @@ export function codeToCountry(code) {
       return "Antigua & Barbuda";
     case "FJI":
       return "Fiji";
-    case "FI1":
+    case "FIN":
       return "Finland";
-    case "FR1":
+    case "FRA":
       return "France";
     case "AND":
       return "Andorra";
@@ -360,7 +360,7 @@ export function codeToCountry(code) {
       return "Iraq";
     case "IRL":
       return "Ireland";
-    case "IS1":
+    case "ISR":
       return "Israel";
     case "ITA":
       return "Italy";
@@ -430,11 +430,11 @@ export function codeToCountry(code) {
       return "Namibia";
     case "NPL":
       return "Nepal";
-    case "NL1":
+    case "NLD":
       return "Netherlands";
     case "CPV":
       return "Cabo Verde";
-    case "NZ1":
+    case "NZL":
       return "New Zealand";
     case "NIC":
       return "Nicaragua";
@@ -534,9 +534,9 @@ export function codeToCountry(code) {
       return "Ukraine";
     case "ARE":
       return "United Arab Emirates";
-    case "GB1":
+    case "GBR":
       return "United Kingdom of Great Britain & Nothern Ireland";
-    case "US1":
+    case "USA":
       return "United States of America";
     case "URY":
       return "Uruguay";
@@ -1043,10 +1043,58 @@ export function restCountryConversion(code) {
     return "CYP";
   } else if (code === "AU1") {
     return "AUS";
+  } else if (code === "SDS") {
+    return "SSD";
+  } else if (code === "PR1") {
+    return "PRT";
+  } else if (code === "PN1") {
+    return "PHL";
+  } else if (code === "B77") {
+    return "TWN";
   } else {
     return code;
   }
 }
+
+
+export function reverseCountryConversion(code) {
+  if (code === "NLD") {
+    return "NL1";
+  } else if (code === "NZL") {
+    return "NZ1";
+  } else if (code === "GBR") {
+    return "GB1";
+  } else if (code === "USA") {
+    return "US1";
+  } else if (code === "ESH") {
+    return "SAH";
+  } else if (code === "CHN") {
+    return "CH1";
+  } else if (code === "DNK") {
+    return "DN1";
+  } else if (code === "FRA") {
+    return "FR1";
+  } else if (code === "FIN") {
+    return "FI1";
+  } else if (code === "ISR") {
+    return "IS1";
+  } else if (code === "CYP") {
+    return "CYN";
+  } else if (code === "AUS") {
+    return "AU1";
+  } else if (code === "SSD") {
+    return "SDS";
+  } else if (code === "PRT") {
+    return "PR1";
+  } else if (code === "PNL") {
+    return "PH1";
+  } else if (code === "TWN") {
+    return "B77";
+  } else {
+    return code;
+  }
+}
+
 
 //Code for country cards (save for later)
 String.prototype.toProperCase = function() {
@@ -1076,8 +1124,8 @@ countries.forEach(country => {
 });
 
 export function returnCode(id) {
-  let new_id = id - 1;
-  return countries[new_id];
+  // let new_id = id - 1;
+  return countries[id];
 }
 
 export function returnId(code) {

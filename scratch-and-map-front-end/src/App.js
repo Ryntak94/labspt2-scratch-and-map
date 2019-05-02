@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import ParentNav from "./components/NavContainer/ParentNav";
 import "./index.scss";
 import axios from "axios";
+import { Elements, StripeProvider } from "react-stripe-elements";
 require("dotenv").config();
 
 class App extends Component {
@@ -14,19 +15,23 @@ class App extends Component {
   componentDidMount() {
     //grab FbAcessToken from local storage
     axios
-      .post(`http://${process.env.REACT_APP_BACKEND_URL}/api/users/fb`, {
+      .post(`${process.env.REACT_APP_BACKEND_URL}/api/users/fb/token`, {
         accessToken: window.localStorage.getItem("FbAccessToken")
       })
       .then(res => {
-        this.setState(state => ({
-          isLoggedIn: res.data.isLoggedIn
-        }));
+        if (window.localStorage.getItem("FbAccessToken")) {
+          this.setState({ isLoggedIn: true });
+        }
       });
   }
   render() {
     return (
       <div className="App">
-        <ParentNav />
+              <StripeProvider apiKey="pk_test_krA4dF6Zbe7WEYEqao5EeKmv00SpwNokud">
+                      <Elements>
+                         <ParentNav/>
+                      </Elements>
+              </StripeProvider>
       </div>
     );
   }

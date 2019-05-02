@@ -9,10 +9,10 @@ def load_users(user_filename):
     for i, row in enumerate(open(user_filename)):
         if row[0]!='i':
             row = row.rstrip()
-            user_id, username, password, first_name, last_name, age, nationality, picture_url, email, role, auto_scratch, home_country, fb_user_id, fb_access_token= row.split(",")
+            user_id, username, password, first_name, last_name, age, nationality, picture_url, email, role, home_country, fb_user_id, fb_access_token, premium = row.split(",")
 
             user = users(username=username, password=password, first_name=first_name, last_name=last_name,
-            age=age, nationality=nationality, picture_url=picture_url, email=email, role=role, auto_scratch=auto_scratch, home_country=home_country, fb_user_id=fb_user_id, fb_access_token=fb_access_token)
+            age=age, nationality=nationality, picture_url=picture_url, email=email, role=role, home_country=home_country, fb_user_id=fb_user_id, fb_access_token=fb_access_token, premium=premium)
 
             db.session.add(user)
     db.session.commit()
@@ -33,8 +33,7 @@ if __name__ == "__main__":
     load_dotenv('.env')
     DATABASE_URL = os.environ.get("DATABASE_URL")
     connect_to_db(app, DATABASE_URL)
-    db.create_all()
-    user_filename = "seed_files/MOCK_DATA.csv"
-    countries_filename = "seed_files/COUNTRY_DATA.csv"
-    load_users(user_filename)
-    load_countries(countries_filename)
+    with app.app_context():
+        db.init_app(app)
+        countries_filename = "seed_files/COUNTRY_DATA.csv"
+        load_countries(countries_filename)

@@ -1,13 +1,14 @@
-import React from 'react'
-import { Dimmer, Loader, Segment } from 'semantic-ui-react'
+import React from "react";
+import { Loader } from "semantic-ui-react";
 
 const Loading = () => (
   <div>
     <div className="loading">
-    <Loader size="massive" active inline='centered'><p>Loading</p></Loader>
+      <Loader size="massive" active inline="centered">
+        <p>Loading</p>
+      </Loader>
     </div>
   </div>
-)
+);
 
-export default Loading
-
+export default Loading;

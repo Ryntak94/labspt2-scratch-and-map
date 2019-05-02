@@ -4,7 +4,6 @@ from sqlalchemy import Column, Integer, String, CheckConstraint, ForeignKey, ARR
 from sqlalchemy.orm import relationship, backref
 from flask_marshmallow import Marshmallow
 from marshmallow import fields, Schema
-
 db = SQLAlchemy()
 ma = Marshmallow()
 
@@ -16,15 +15,15 @@ class users(db.Model):
     last_name = db.Column(String, nullable=False)
     age = db.Column(Integer, CheckConstraint( 'age>=14' ), nullable=False)
     nationality = db.Column(String, nullable=True)
-    picture_url = db.Column(String)
+    picture_url = db.Column(String, nullable=True)
     email = db.Column(String, unique=True, nullable=False)
     role = db.Column(String, nullable=False)
-    auto_scratch = db.Column(String, default=False)
     home_country = db.Column(String, nullable=False)
     fb_user_id = db.Column(String, nullable=False)
     fb_access_token = db.Column(String, nullable=False)
+    premium = db.Column(Boolean, default=False)
 
-    def __init__(self, username, password, first_name, last_name, age, nationality, picture_url, email, role, auto_scratch, home_country, fb_user_id, fb_access_token):
+    def __init__(self, username, password, first_name, last_name, age, nationality, picture_url, email, role, home_country, fb_user_id, fb_access_token, premium):
         self.username = username
         self.password = password
         self.first_name = first_name
@@ -34,10 +33,10 @@ class users(db.Model):
         self.picture_url = picture_url
         self.email = email
         self.role = role
-        self.auto_scratch = auto_scratch
         self.home_country = home_country
         self.fb_user_id = fb_user_id
         self.fb_access_token = fb_access_token
+        self.premium = premium
 
     def __repr__(self):
         return '<{}>' % self.__name__
@@ -45,9 +44,9 @@ class users(db.Model):
 class UserSchema(ma.ModelSchema):
     class Meta:
         model = users
-        fields = ('id','username', 'email', 'first_name', 'last_name', 'age', 'nationality', 'picture_url', 'role', 'auto_scratch', 'home_country', 'user_countries', 'fb_user_id', 'fb_access_token')
+        fields = ('id','username', 'email', 'first_name', 'last_name', 'age', 'nationality', 'picture_url', 'role', 'home_country', 'user_countries', 'fb_user_id', 'fb_access_token', 'premium')
     user_countries = fields.Nested('UserCountrySchema', many = True,
-                                    only = ['country_id', 'status', 'notes'])
+                                    only = ['user_id','country_id', 'status', 'notes'])
 
 user_schema = UserSchema()
 users_schema = UserSchema(many=True)
@@ -97,12 +96,12 @@ class users_countries_join(db.Model):
 
 class UserCountrySchema(ma.ModelSchema):
     class Meta:
-        fields = ('user_id', 'country_id', 'status', 'notes')
+        fields = ( 'user_id', 'country_id', 'status', 'notes')
         model = users_countries_join
 user_country_schema = UserCountrySchema()
 users_country_schema = UserCountrySchema(many=True)
 
-class friends_with(db.Model):
+'''class friends_with(db.Model):
     id = db.Column(Integer, autoincrement=True, primary_key=True)
     user_1 = db.Column(Integer, ForeignKey(users.id), nullable=False)
     user_2 = db.Column(Integer, ForeignKey(users.id), nullable=False)
@@ -116,4 +115,4 @@ class friends_with(db.Model):
         # user_1 = relationship("users", foreign_keys=[user_1_id], backref=backref("send_connections"))
         # user_2 = relationship("users", foreign_keys=[user_2_id], backref=backref("receive_connections")
     def __repr__(self):
-        return '<{}>' % self.__name__
+        return '<{}>' % self.__name__'''

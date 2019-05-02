@@ -1,9 +1,7 @@
 import React, { Component } from "react";
-import Login from "./Login";
-import Register from "./Register";
 import FbLogin from "./FbLogin";
 import axios from "axios";
-import { Button, Header, Image, Modal } from 'semantic-ui-react'
+import { Button, Modal } from "semantic-ui-react";
 
 class Auth extends Component {
   constructor() {
@@ -35,55 +33,69 @@ class Auth extends Component {
     this.setState({ [e.target.name]: e.target.value });
   };
 
-
   onSubmitHandler = e => {
     e.preventDefault();
     e.stopPropagation();
     const action = this.state.isLoginOpen ? "login" : "signup";
     axios
-      .post(`http://localhost:5000/${action}`, {
+      .post(`${process.env.REACT_APP_BACKEND_URL}/${action}`, {
         username: this.state.username,
         email: this.state.email,
         password: this.state.password
       })
       .then(response => {
-        console.log(response)
-        this.props.history.push("/map");//Not currently redirecting
+        console.log(response);
+        this.props.history.push("/map"); //Not currently redirecting
       });
   };
 
   render() {
     return (
       <div className="landing">
-      <div className="Nav">
-      <Modal size='mini' trigger={<Button className="navbutton" inverted>Sign Up</Button>} closeIcon>
-      <Modal.Content>
-      <div className="box-wrapper">
-          {this.state.isLoginOpen && (
-            <FbLogin
-              inputChange={this.handleInputChange}
-              submit={this.onSubmitHandler}
-            />
-          )}
-        </div>
-        </Modal.Content>
-        </Modal>
-
-        <Modal size='mini' trigger={<Button className="navbutton" inverted>Log In</Button>} closeIcon>
-        <Modal.Content image>
-        <div className="box-wrapper">
-          {this.state.isLoginOpen && (
-            <FbLogin
-              inputChange={this.handleInputChange}
-              submit={this.onSubmitHandler}
-            />
-          )}
-          </div>
-          </Modal.Content>
+        <div className="Nav">
+          <Modal
+            size="mini"
+            trigger={
+              <Button className="navbutton" inverted>
+                SIGN UP
+              </Button>
+            }
+            closeIcon
+          >
+            <Modal.Content>
+              <div className="box-wrapper">
+                {this.state.isLoginOpen && (
+                  <FbLogin
+                    inputChange={this.handleInputChange}
+                    submit={this.onSubmitHandler}
+                  />
+                )}
+              </div>
+            </Modal.Content>
           </Modal>
 
+          <Modal
+            size="mini"
+            trigger={
+              <Button className="navbutton" inverted>
+                LOG IN
+              </Button>
+            }
+            closeIcon
+          >
+            <Modal.Content image>
+              <div className="box-wrapper">
+                {this.state.isLoginOpen && (
+                  <FbLogin
+                    inputChange={this.handleInputChange}
+                    submit={this.onSubmitHandler}
+                  />
+                )}
+              </div>
+            </Modal.Content>
+          </Modal>
 
-      {/* <div className="auth-wrapper">
+          {/* <div className="auth-wrapper">
         <div className="auth-controller">
           <div
             className={
@@ -105,7 +117,7 @@ class Auth extends Component {
           </div>
         </div>
       </div> */}
-      </div>
+        </div>
       </div>
     );
   }

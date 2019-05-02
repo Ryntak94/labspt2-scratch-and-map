@@ -1,18 +1,18 @@
 import React, { Component } from "react";
-import { returnCode, returnId } from "../helper";
-import {
-  Button,
-  Header,
-  Image,
-  Modal,
-  Form,
-  TextArea,
-  Icon
-} from "semantic-ui-react";
+import { returnId } from "../helper";
+import { Button, Header, Modal, Form, TextArea, Icon } from "semantic-ui-react";
 import CardSlider from "./CardSlider";
-import { codeToCountry, restCountryConversion } from "../helper";
+import {
+  codeToCountry,
+  restCountryConversion,
+  reverseCountryConversion,
+  countries
+} from "../helper";
 import "../../styles/card.scss";
 import axios from "axios";
+import { connect } from "react-redux";
+import { withRouter } from "react-router-dom";
+import FriendsTravel from "./FriendsTravel";
 
 class Card extends Component {
   constructor(props) {
@@ -22,13 +22,62 @@ class Card extends Component {
       imageUrl: "",
       countryName: "",
       status: 1,
-      notes: ""
+      notes: "",
+      currency: "",
+      symbol: "",
+      capital: "",
+      language: "",
+      users: [],
+      traveler: [],
+      modalOpen: true,
+      user: null
     };
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     let code = restCountryConversion(this.props.country_code);
     let codename = this.props.country_code;
+
+    await axios
+      .get(
+        `${process.env.REACT_APP_BACKEND_URL}/api/users/fb/${
+          this.props.currentUser
+        }`
+      )
+      .then(res => {
+        this.setState({ user: res.data.id });
+      });
+
+    axios
+      .get(`${process.env.REACT_APP_BACKEND_URL}/api/users/${this.state.user}`)
+      .then(res => {
+        let userInfo = res.data.user_countries;
+        for (i = 0; i < userInfo.length; i++) {
+          let currentCountry = returnId(
+            reverseCountryConversion(this.props.country_code)
+          );
+          if (currentCountry === userInfo[i].country_id) {
+            let countryNotes = userInfo[i].notes;
+            this.setState({ notes: countryNotes });
+          }
+        }
+      });
+
+    axios
+      .get(`${process.env.REACT_APP_BACKEND_URL}/api/users/${this.state.user}`)
+      .then(res => {
+        let userInfo = res.data.user_countries;
+        for (i = 0; i < userInfo.length; i++) {
+          let currentCountry = returnId(
+            reverseCountryConversion(this.props.country_code)
+          );
+          if (currentCountry === userInfo[i].country_id) {
+            let countryNotes = userInfo[i].notes;
+            this.setState({ notes: countryNotes });
+          }
+        }
+      });
+
     fetch(`https://restcountries.eu/rest/v2/alpha/${code}`).then(response =>
       response
         .json()
@@ -37,113 +86,175 @@ class Card extends Component {
           status: response.status
         }))
         .then(res => {
-          let cardCode = "";
-          cardCode = res.data.flag;
-          let countrySelect = codeToCountry(codename);
-          this.setState({ imageUrl: cardCode, countryName: countrySelect });
+          let countrySelect = codeToCountry(restCountryConversion(codename));
+          let currency = res.data.currencies[0].name.toProperCase();
+          let symbol = res.data.currencies[0].symbol;
+          let cardCode = res.data.flag;
+          let language = res.data.languages[0].name;
+          let capital = res.data.capital;
+          if (currency === "[E]" || currency === "[D]") {
+            currency = "United States Dollar";
+          }
+          this.setState({
+            imageUrl: cardCode,
+            countryName: countrySelect,
+            currency: currency,
+            symbol: symbol,
+            language: language,
+            capital: capital
+          });
         })
     );
-  }
 
-  onSave() {
+    let i = reverseCountryConversion(this.props.country_code);
+    let index = countries.indexOf(i) + 2;
+
     axios
-      .get(
-        `${
-          process.env.REACT_APP_BACKEND_URL
-        }/api/users/fb/${window.localStorage.getItem("SAMUserID")}`
-      )
+      .get(`${process.env.REACT_APP_BACKEND_URL}/api/countries/${index}`)
       .then(res => {
-        const countryData = {
-          user_id: res.id,
-          country_id: returnId(this.props.country_code),
-          status: this.state.status,
-          notes: "None"
-        };
-        let country = res.data.filter(item => {
-          return (
-            item.user_countries.country_id === returnId(this.props.country_code)
-          );
-        });
-        if (country === []) {
-          axios.post(
-            `${process.env.REACT_APP_BACKEND_URL}/api/mapview`,
-            countryData
-          );
-        } else {
-          axios.put(
-            `${process.env.REACT_APP_BACKEND_URL}/api/mapview`,
-            countryData
-          );
-        }
+        this.setState({ traveler: res.data.travelers });
       });
   }
 
+  handleClose() {
+    this.setState({ modalOpen: false });
+  }
+
+  onSave() {
+    let newNotes = document.getElementById("Notes").value;
+    axios
+      .get(
+        `${process.env.REACT_APP_BACKEND_URL}/api/users/fb/${
+          this.props.currentUser
+        }`
+      )
+      .then(res => {
+        const countryData = {
+          user_id: res.data.id,
+          country_id: returnId(
+            reverseCountryConversion(this.props.country_code)
+          ),
+          status: this.state.status,
+          notes: newNotes
+        };
+        let country = res.data.user_countries.filter(item => {
+          return (
+            item.country_id ===
+            returnId(reverseCountryConversion(this.props.country_code))
+          );
+        });
+        if (country.length === 0) {
+          axios
+            .post(
+              `${process.env.REACT_APP_BACKEND_URL}/api/mapview`,
+              countryData
+            )
+            .then(res => {
+              this.props.cardSaveHandler(this.props.currentUser);
+            });
+        } else {
+          axios
+            .put(
+              `${process.env.REACT_APP_BACKEND_URL}/api/mapview/${
+                countryData.user_id
+              }/${countryData.country_id}`,
+              countryData
+            )
+            .then(res => {
+              this.props.cardSaveHandler(this.props.currentUser);
+            });
+        }
+      });
+    this.handleClose();
+  }
+
   onChange = status => {
-    this.setState(
-      state => ({
-        status: status
-      }),
-      () => {
-        console.log(this.state);
-      }
-    );
+    this.setState(state => ({
+      status: parseInt(status, 10)
+    }));
   };
 
   render() {
-    const friends = [
-      { id: 9, first_name: "Abi", last_name: "French" },
-      { id: 1, first_name: "Javier", last_name: "English" },
-      { id: 2, first_name: "Ryan", last_name: "Adams" },
-      { id: 3, first_name: "Bull", last_name: "Moll" },
-      { id: 4, first_name: "Courtney", last_name: "B Vance" }
-    ];
+    const loggedInUser = window.localStorage.getItem("SAMUserID");
 
     const cardStyle = {
       zIndex: 11,
       border: "1px solid steelblue"
     };
 
-    let friendList = friends.map(friend => (
-      <div key={friend.id}>
-        {" "}
-        <p>
-          {friend.first_name} {friend.last_name}
-        </p>
-      </div>
-    ));
+    const modalStyle = {
+      width: "40%"
+    };
+
     return (
       <div style={cardStyle}>
-        <Modal open={this.props.open}>
+        <Modal
+          style={modalStyle}
+          className="modalStyle"
+          open={this.state.modalOpen}
+          // onClose={this.handleClose}
+        >
           <Modal.Content
             image
             style={{ display: "flex", flexDirection: "column" }}
           >
-            <Header>{this.state.countryName}</Header>
+            <Header
+              style={{ display: "flex", justifyContent: "space-between" }}
+            >
+              <h1>{this.state.countryName} </h1>{" "}
+              <Icon name="window close" onClick={() => this.props.onClose()} />{" "}
+            </Header>
             <div
               style={{
                 width: "100%",
                 display: "flex",
-                justifyContent: "center",
-                margin: "10px"
+                justifyContent: "space-around",
+                margin: "10px 10px 30px 10px"
               }}
             >
-              <img
-                style={{ height: "10%", width: "50%" }}
-                src={this.state.imageUrl}
-              />
+              <div>
+                <img
+                  style={{
+                    border: "1px solid black",
+                    height: "10vw",
+                    marginBottom: "20px"
+                  }}
+                  alt =""
+                  src={this.state.imageUrl}
+                />
+              </div>
+              <div style={{ width: "40%", height: "30px", marginLeft: "15px" }}>
+                <h4>CAPITAL: {this.state.capital}</h4>
+                <h4>LANGUAGE: {this.state.language}</h4>
+                <h4>
+                  CURRENCY: {this.state.currency} ({this.state.symbol}){" "}
+                </h4>
+              </div>
             </div>
-            <CardSlider status={this.state.status} onChange={this.onChange} />
+
+            {loggedInUser === this.props.displayedUser ? (
+              <CardSlider status={this.state.status} onChange={this.onChange} />
+            ) : null}
+
             <Modal.Description>
               <strong>Notes:</strong>
               {
                 <Form>
                   <TextArea
                     style={{ marginBottom: "10px" }}
-                    placeholder="Travel Notes"
+                    placeholder={this.state.notes}
+                    id="Notes"
                   />
                 </Form>
               }
-              <Button onClick={() => this.onSave()}>Save</Button>
+              <div>
+                Friends' Travels:
+                <FriendsTravel friends={this.state.traveler} />
+              </div>
+
+              {loggedInUser === this.props.displayedUser ? (
+                <Button onClick={() => this.onSave()}>Save</Button>
+              ) : null}
             </Modal.Description>
           </Modal.Content>
         </Modal>
@@ -152,4 +263,9 @@ class Card extends Component {
   }
 }
 
-export default Card;
+const mapStateToProps = state => {
+  return {
+    displayedUser: state.getUserDataReducer.displayedUser
+  };
+};
+export default withRouter(connect(mapStateToProps)(Card));

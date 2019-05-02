@@ -1,6 +1,7 @@
+
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "SCRATCH&MAP",
+  "name": "Scratch and Map",
   "icons": [
     {
       "src": "favicon.ico",
