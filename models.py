@@ -21,7 +21,7 @@ class users(db.Model):
     home_country = db.Column(String, nullable=False)
     fb_user_id = db.Column(String, nullable=False)
     fb_access_token = db.Column(String, nullable=False)
-    premium = db.Column(Boolean, default=False)
+    premium = db.Column(String, default=False)
 
     def __init__(self, username, password, first_name, last_name, age, nationality, picture_url, email, role, home_country, fb_user_id, fb_access_token, premium):
         self.username = username
